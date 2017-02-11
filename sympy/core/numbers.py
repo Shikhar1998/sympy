@@ -418,28 +418,27 @@ class Number(AtomicExpr):
         return divmod(other, self)
 
     def __round__(self, *args):
+        args = args[0]
         try :
             d = decimal.Decimal(str(self))
             d = d.as_tuple()
-            if (d.exponent == 0 or (args[0]) > (-1)*d.exponent):
+            if (d.exponent == 0 or (args) > (-1)*d.exponent):
                 return self
             else:
-                val_for_comparision = d.digits[d.exponent + args[0]]
-                val_bef_point = d.digits[d.exponent - 1 + args[0]]
+                val_for_comparision = d.digits[d.exponent + args]
+                val_bef_point = d.digits[d.exponent - 1 + args]
                 temp = list(d.digits)
                 if val_for_comparision == 5 and (val_bef_point)%2 != 0:
                     temp[d.exponent - 1 + args] += 1
-                    temp = temp[:(d.exponent + args[0])]
-                    rounded_result = "-" if d.sign else ""
-                    for i in range(len(temp)):
-                        if i == len(str(self)) + d.exponent - 1 :
-                            rounded_result += "."
-                        rounded_result += str(temp[i])
-                    return Float(rounded_result, len(temp))
-                else:
-                    return round(float(self), args[0])
+                temp = temp[:(d.exponent + args)]
+                rounded_result = "-" if d.sign else ""
+                for i in range(len(temp)):
+                    if i == len(str(self)) + d.exponent - 1 :
+                        rounded_result += "."
+                    rounded_result += str(temp[i])
+                return Float(rounded_result, len(temp))
         except Exception:
-            return round(float(self), args[0])
+            return round(float(self), args)
 
     def _as_mpf_val(self, prec):
         """Evaluation of mpf tuple accurate to at least prec bits."""
